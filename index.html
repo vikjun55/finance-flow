@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finance Flow</title>
+
+<style>
+body{
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  background:#f2f2f7;
+  padding:16px;
+}
+section{
+  background:white;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:16px;
+}
+.row{
+  display:flex;
+  gap:8px;
+  margin-top:8px;
+}
+input{
+  padding:8px;
+  flex:1;
+}
+button{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  background:#007aff;
+  color:white;
+  border:none;
+  border-radius:10px;
+  font-size:16px;
+}
+.summary{
+  background:#e8f4ff;
+  font-weight:600;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Finance Flow</h1>
+
+<section>
+<h2>Income</h2>
+<div id="incomeList"></div>
+<button onclick="addIncome()">+ Add Income</button>
+</section>
+
+<section>
+<h2>Expenses</h2>
+<div id="expenseList"></div>
+<button onclick="addExpense()">+ Add Expense</button>
+</section>
+
+<section>
+<h2>Savings</h2>
+<input id="savings" type="number" inputmode="decimal" placeholder="Savings amount">
+</section>
+
+<section class="summary">
+<p>Total Income: $<span id="totalIncome">0</span></p>
+<p>Total Expenses: $<span id="totalExpenses">0</span></p>
+<p>Remaining: $<span id="remaining">0</span></p>
+</section>
+
+<script>
+function onlyLetters(e){
+  e.target.value = e.target.value.replace(/[^a-zA-Z\s]/g,"");
+}
+
+function addIncome(){
+  const div=document.createElement("div");
+  div.className="row";
+  div.innerHTML=`
+    <input type="text" placeholder="Income source" oninput="onlyLetters(event)">
+    <input type="number" inputmode="decimal" placeholder="Amount">
+  `;
+  document.getElementById("incomeList").appendChild(div);
+  div.querySelectorAll("input").forEach(i=>i.addEventListener("input",calculate));
+}
+
+function addExpense(){
+  const div=document.createElement("div");
+  div.className="row";
+  div.innerHTML=`
+    <input type="text" placeholder="Expense name" oninput="onlyLetters(event)">
+    <input type="number" inputmode="decimal" placeholder="Amount">
+  `;
+  document.getElementById("expenseList").appendChild(div);
+  div.querySelectorAll("input").forEach(i=>i.addEventListener("input",calculate));
+}
+
+function calculate(){
+  let income=0;
+  let expenses=0;
+
+  document.querySelectorAll("#incomeList .row").forEach(r=>{
+    income+=Number(r.children[1].value)||0;
+  });
+
+  document.querySelectorAll("#expenseList .row").forEach(r=>{
+    expenses+=Number(r.children[1].value)||0;
+  });
+
+  const savings=Number(document.getElementById("savings").value)||0;
+  const remaining=income-expenses-savings;
+
+  document.getElementById("totalIncome").textContent=income.toFixed(2);
+  document.getElementById("totalExpenses").textContent=expenses.toFixed(2);
+  document.getElementById("remaining").textContent=remaining.toFixed(2);
+}
+
+document.getElementById("savings").addEventListener("input",calculate);
+
+// filas iniciales
+addIncome();
+addExpense();
+</script>
+
+</body>
+</html>
